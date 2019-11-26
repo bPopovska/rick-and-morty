@@ -1,6 +1,7 @@
 import React from "react";
 import "./App.css";
 import Location from "./Location";
+import Episode from "./Episode";
 
 const Character: React.FC = ({
   id,
@@ -10,7 +11,8 @@ const Character: React.FC = ({
   species,
   status,
   location,
-  origin
+  origin,
+  episodes
 }: any) => {
   return (
     <div className="App" key={id}>
@@ -20,9 +22,12 @@ const Character: React.FC = ({
       <h2>Species: {species}</h2>
       <h2>Status: {status}</h2>
       <h2>Location details:</h2>
-      <Location {...location} />
+      {location ? <Location {...location} /> : "Unknown"}
       <h2>Origin details:</h2>
-      <Location {...origin} />
+      {origin ? <Location {...origin} /> : "Unknown"}
+      <h2>Stars in episodes:</h2>
+      {episodes &&
+        episodes.filter(e => !!e).map(ep => <Episode key={ep.id} {...ep} />)}
     </div>
   );
 };
