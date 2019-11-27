@@ -1,5 +1,4 @@
 import React from "react";
-import "./App.css";
 import Location from "./Location";
 import Episode from "./Episode";
 
@@ -15,7 +14,7 @@ const Character: React.FC = ({
   episodes
 }: any) => {
   return (
-    <div className="App" key={id}>
+    <div key={id}>
       <img src={image} alt={name} />
       <h1>Name: {name}</h1>
       <h2>Gender: {gender}</h2>

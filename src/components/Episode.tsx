@@ -1,5 +1,4 @@
 import React from "react";
-import "./App.css";
 
 const Episode: React.FC = ({
   id,
@@ -8,7 +7,7 @@ const Episode: React.FC = ({
   air_date,
 }: any) => {
   return (
-    <div className="App" key={id}>
+    <div key={id}>
       <h5>{episode}: {name} ({air_date})</h5>
     </div>
   );

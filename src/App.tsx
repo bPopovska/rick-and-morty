@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
-import Character from "./Character";
+import Character from "./components/Character";
+import Pager from "./components/Pager";
 
 const App: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -72,20 +73,23 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      {pagerInfo &&
-        Array.from(Array(pagerInfo.pages).keys()).map(page => (
-          <a href="#" key={page} onClick={() => setPage(page + 1)}>
-            {page + 1}{" "}
-          </a>
-        ))}
+      {pagerInfo && <Pager pages={pagerInfo.pages} setPage={setPage} />}
       {!loaded && "Loading"}
       {characters &&
         characters.map(character => (
           <Character
             key={character.id}
             {...character}
-            location={locations && character.location.url && locations[character.location.url]}
-            origin={locations && character.origin.url && locations[character.origin.url]}
+            location={
+              locations &&
+              character.location.url &&
+              locations[character.location.url]
+            }
+            origin={
+              locations &&
+              character.origin.url &&
+              locations[character.origin.url]
+            }
             episodes={
               episodes &&
               character.episode &&
