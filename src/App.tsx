@@ -11,35 +11,48 @@ const App: React.FC = () => {
   const [locations, setLocations] = useState(null);
   const [episodes, setEpisodes] = useState(null);
 
-  console.log(page);
+  function getAllOriginUrls(data) {
+    const originUrls = data.results.map(res => res.origin.url).filter(e => !!e);
+    const locationUrls = data.results
+      .map(res => res.location.url)
+      .filter(e => !!e);
+    const allUrlsToBeFetched = [...originUrls, ...locationUrls]
+      .reduce(
+        (unique, item) => (unique.includes(item) ? unique : [...unique, item]),
+        []
+      )
+      .filter(e => !!e);
+    return allUrlsToBeFetched;
+  }
+
+  function getAllEpisodesUrls(data) {
+    const allEpisodeUrls = data.results
+      .map(res => res.episode)
+      .filter(e => !!e)
+      .reduce((acc, item) => [...acc, ...item], [])
+      .reduce(
+        (unique, item) => (unique.includes(item) ? unique : [...unique, item]),
+        []
+      );
+    return allEpisodeUrls;
+  }
+
   useEffect(() => {
     fetch(`https://rickandmortyapi.com/api/character/?page=${page}`)
       .then(data => data.json())
       .then(jsonData => {
         setCharacters(jsonData.results);
         setPagerInfo(jsonData.info);
-        const originUrls = jsonData.results
-          .map(res => res.origin.url)
-          .filter(e => !!e);
-        const locationUrls = jsonData.results
-          .map(res => res.location.url)
-          .filter(e => !!e);
-        const allUrlsToBeFetched = [...originUrls, ...locationUrls]
-          .reduce(
-            (unique, item) =>
-              unique.includes(item) ? unique : [...unique, item],
-            []
-          )
-          .filter(e => !!e);
+
+        const allLocationUrls = getAllOriginUrls(jsonData);
 
         Promise.all(
-          allUrlsToBeFetched.map(url =>
+          allLocationUrls.map(url =>
             fetch(url).then(data =>
-              data.json().catch(error => console.log("error", error))
+              data.json().catch(error => console.error("error", error))
             )
           )
         ).then(results => {
-          console.log(results);
           const mapOfResults = results.reduce((map: any, obj: any) => {
             map[obj.url] = obj;
             return map;
@@ -47,18 +60,13 @@ const App: React.FC = () => {
           setLocations(mapOfResults);
         });
 
-        const allEpisodeUrls = jsonData.results
-          .map(res => res.episode)
-          .filter(e => !!e)
-          .reduce((acc, item) => [...acc, ...item], [])
-          .reduce(
-            (unique, item) =>
-              unique.includes(item) ? unique : [...unique, item],
-            []
-          );
-
+        const allEpisodesUrls = getAllEpisodesUrls(jsonData);
         Promise.all(
-          allEpisodeUrls.map(url => fetch(url).then(data => data.json()))
+          allEpisodesUrls.map(url =>
+            fetch(url).then(data =>
+              data.json().catch(error => console.error("error", error))
+            )
+          )
         ).then(results => {
           const mapOfResults = results.reduce((map: any, obj: any) => {
             map[obj.url] = obj;
